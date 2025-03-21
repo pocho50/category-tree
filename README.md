@@ -1,6 +1,7 @@
 # Categories Tree
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+You can preview the project by visiting the following link:  
+[Category Tree Preview](https://category-tree-wine.vercel.app/)
 
 ## Setup
 

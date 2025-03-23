@@ -3,6 +3,10 @@ const props = defineProps<{
   categories: Category[];
 }>();
 
+const emit = defineEmits<{
+  removeCategory: [category: Category];
+}>();
+
 const selected = defineModel<Category>({ default: null });
 
 const open = ref<String[]>([]);
@@ -16,6 +20,10 @@ function handleSelectCategory(category: Category) {
 
   selected.value = category;
 }
+
+const handleRemove = (category: Category) => {
+  emit("removeCategory", category);
+};
 </script>
 
 <template>
@@ -38,13 +46,22 @@ function handleSelectCategory(category: Category) {
             class="mr-2"
           />
         </span>
-
-        {{ category.name }}
+        <span class="flex gap-5 items-center">
+          {{ category.name }}
+          <div class="tooltip flex pt-1" data-tip="Remove category">
+            <Icon
+              name="heroicons:minus-circle"
+              class="text-error"
+              @click.stop="handleRemove(category)"
+            />
+          </div>
+        </span>
       </button>
 
       <CategoryTree
         v-if="category.subcategories && open.includes(category.name)"
         :categories="category.subcategories"
+        @remove-category="handleRemove"
         v-model="selected"
         class="ml-4"
       />

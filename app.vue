@@ -1,28 +1,16 @@
 <script setup lang="ts">
-const { data: categories } = await useFetch("/api/categories");
-const categorySelected = ref<Category>();
+const {
+  categories,
+  getPath,
+  handleAddCategory,
+  handleRemoveCategory,
+  resetPath,
+  categorySelected,
+} = useTreeCategory();
 
-const getPath = computed(() =>
-  categorySelected.value && categories.value
-    ? getCategoryPath(categories.value, categorySelected.value?.name)
-    : "/"
-);
+const { data } = await useFetch("/api/categories");
 
-const handleAddCategory = (categoryName: string) => {
-  const categoryToAdd = {
-    name: categoryName,
-    subcategories: [],
-  };
-  if (categorySelected.value) {
-    categorySelected.value.subcategories.push(categoryToAdd);
-    return;
-  }
-  categories.value?.push(categoryToAdd);
-};
-
-const resetPath = () => {
-  categorySelected.value = undefined;
-};
+categories.value = data.value;
 </script>
 
 <template>
@@ -37,7 +25,7 @@ const resetPath = () => {
         </p>
         <div class="flex flex-col lg:flex-row gap-10 text-xl lg:text-2xl">
           <div class="flex gap-3">
-            <p>Path: {{ getPath }}</p>
+            <p>Path: {{ getPath || "/" }}</p>
             <div class="tooltip flex pt-1" data-tip="Reset path">
               <Icon
                 name="heroicons:x-circle"
@@ -54,7 +42,12 @@ const resetPath = () => {
           />
         </div>
       </aside>
-      <CategoryTree v-if="categories" :categories v-model="categorySelected" />
+      <CategoryTree
+        v-if="categories"
+        :categories
+        v-model="categorySelected"
+        @remove-category="handleRemoveCategory"
+      />
     </main>
   </div>
 </template>
